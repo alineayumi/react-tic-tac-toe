@@ -19,8 +19,14 @@ function Board(props) {
     const sqs = squares.slice();
     sqs[i] = xIsNext ? "X" : "O";
     setSquares(sqs);
-    setXIsNext(!xIsNext);
-    setStatus("Next Player: " + (xIsNext ? "X" : "O"));
+
+    const winner = calculateWinner(sqs);
+    if (winner) {
+      setStatus("Winner: " + winner);
+    } else {
+      setXIsNext(!xIsNext);
+      setStatus("Next Player: " + (xIsNext ? "X" : "O"));
+    }
   }
 
   function renderSquare(i) {
@@ -50,17 +56,38 @@ function Board(props) {
 }
 
 function Game(props) {
-    return (
-      <div className="game">
-        <div className="game-board">
-          <Board />
-        </div>
-        <div className="game-info">
-          <div>{/* status */}</div>
-          <ol>{/* TODO */}</ol>
-        </div>
+  return (
+    <div className="game">
+      <div className="game-board">
+        <Board />
       </div>
-    );
+      <div className="game-info">
+        <div>{/* status */}</div>
+        <ol>{/* TODO */}</ol>
+      </div>
+    </div>
+  );
+}
+
+function calculateWinner(squares) {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i];
+    if (squares[a] && squares[a] == squares[b] && squares[b] == squares[c]) {
+      return squares[a];
+    }
+  }
+  return null;
 }
 
 // ========================================
