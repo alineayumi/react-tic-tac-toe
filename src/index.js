@@ -19,47 +19,12 @@ function Reset(props) {
 }
 
 function Board(props) {
-  const [squares, setSquares] = useState(Array(9).fill(null));
-  const [xIsNext, setXIsNext] = useState(true);
-  const [status, setStatus] = useState("Next Player: X");
-
-  function handleClick(i) {
-    const sqs = squares.slice();
-
-    // Checks if the square is not already filled
-    if (isGameOver(sqs) || calculateWinner(sqs)) {
-      setStatus("Game over. Play again clicking on 'RESET GAME'");
-    } else if (sqs[i] != null) {
-      setStatus("This square is already filled. Please choose an empty one.");
-    } else if (sqs[i] == null) {
-      sqs[i] = xIsNext ? "X" : "O";
-      setSquares(sqs);
-
-      const winner = calculateWinner(sqs);
-      if (winner) {
-        setStatus("Winner: " + winner);
-      } else if (isGameOver(sqs)) {
-        setStatus("Game Over.");
-      } else {
-        setXIsNext(!xIsNext);
-        setStatus("Next Player: " + (!xIsNext ? "X" : "O"));
-      }
-    }
-  }
-
-  function handleResetClick() {
-    setSquares(Array(9).fill(null));
-    setXIsNext(true);
-    setStatus("Next Player: X");
-  }
-
   function renderSquare(i) {
-    return <Square value={squares[i]} onClick={() => handleClick(i)} />;
+    return <Square value={props.squares[i]} onClick={() => props.onClick(i)} />;
   }
 
   return (
     <div>
-      <div className="status">{status}</div>
       <div className="board-row">
         {renderSquare(0)}
         {renderSquare(1)}
@@ -75,19 +40,79 @@ function Board(props) {
         {renderSquare(7)}
         {renderSquare(8)}
       </div>
-      <Reset onClick={() => handleResetClick()} />
     </div>
   );
 }
 
 function Game(props) {
+  const [history, setHistory] = useState([
+    {
+      squares: Array(9).fill(null),
+      xIsNext: true,
+    },
+  ]);
+  const [status, setStatus] = useState("Next Player: X");
+  const [current, setCurrent] = useState({
+    squares: Array(9).fill(null),
+    xIsNext: true,
+  });
+
+  function onClick(i) {
+    const _history = history.slice();
+    let _current = _history[_history.length - 1];
+    setCurrent(_current);
+
+    // Checks if the square is not already filled
+    if (isGameOver(_current.squares)) {
+      setStatus("Game over. Play again clicking on 'RESET GAME'");
+    } else if (_current.squares[i] != null) {
+      setStatus("This square is already filled. Please choose an empty one.");
+    } else if (_current.squares[i] == null) {
+      const sqs = _current.squares.slice();
+      sqs[i] = _current.xIsNext ? "X" : "O";
+
+      _current = {
+        squares: sqs,
+        xIsNext: !current.xIsNext,
+      };
+      setCurrent(_current);
+      _history.push(_current);
+      setHistory(_history);
+      console.log(history);
+
+      const winner = calculateWinner(sqs);
+      if (winner) {
+        setStatus("Winner: " + winner);
+      } else if (isGameOver(sqs)) {
+        setStatus("Game Over.");
+      } else {
+        setStatus("Next Player: " + (_current.xIsNext ? "X" : "O"));
+      }
+    }
+  }
+
+  function handleResetClick() {
+    setHistory([
+      {
+        squares: Array(9).fill(null),
+        xIsNext: true,
+      },
+    ]);
+    setStatus("Next Player: X");
+    setCurrent({
+        squares: Array(9).fill(null),
+        xIsNext: true
+    })
+  }
+
   return (
     <div className="game">
       <div className="game-board">
-        <Board />
+        <Board squares={current.squares} onClick={(i) => onClick(i)} />
+        <Reset onClick={() => handleResetClick()} />
       </div>
       <div className="game-info">
-        <div>{/* status */}</div>
+        <div>{status}</div>
         <ol>{/* TODO */}</ol>
       </div>
     </div>
@@ -116,6 +141,9 @@ function calculateWinner(squares) {
 }
 
 function isGameOver(squares) {
+  if (calculateWinner(squares)) {
+    return true;
+  }
   for (let i = 0; i < squares.length; i++) {
     if (squares[i] == null) {
       return false;
