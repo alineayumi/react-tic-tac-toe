@@ -10,6 +10,14 @@ function Square(props) {
   );
 }
 
+function Reset(props) {
+  return (
+    <button className="reset" onClick={props.onClick}>
+      RESET GAME
+    </button>
+  );
+}
+
 function Board(props) {
   const [squares, setSquares] = useState(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
@@ -17,16 +25,32 @@ function Board(props) {
 
   function handleClick(i) {
     const sqs = squares.slice();
-    sqs[i] = xIsNext ? "X" : "O";
-    setSquares(sqs);
 
-    const winner = calculateWinner(sqs);
-    if (winner) {
-      setStatus("Winner: " + winner);
-    } else {
-      setXIsNext(!xIsNext);
-      setStatus("Next Player: " + (xIsNext ? "X" : "O"));
+    // Checks if the square is not already filled
+    if (isGameOver(sqs) || calculateWinner(sqs)) {
+      setStatus("Game over. Play again clicking on 'RESET GAME'");
+    } else if (sqs[i] != null) {
+      setStatus("This square is already filled. Please choose an empty one.");
+    } else if (sqs[i] == null) {
+      sqs[i] = xIsNext ? "X" : "O";
+      setSquares(sqs);
+
+      const winner = calculateWinner(sqs);
+      if (winner) {
+        setStatus("Winner: " + winner);
+      } else if (isGameOver(sqs)) {
+        setStatus("Game Over.");
+      } else {
+        setXIsNext(!xIsNext);
+        setStatus("Next Player: " + (!xIsNext ? "X" : "O"));
+      }
     }
+  }
+
+  function handleResetClick() {
+    setSquares(Array(9).fill(null));
+    setXIsNext(true);
+    setStatus("Next Player: X");
   }
 
   function renderSquare(i) {
@@ -51,6 +75,7 @@ function Board(props) {
         {renderSquare(7)}
         {renderSquare(8)}
       </div>
+      <Reset onClick={() => handleResetClick()} />
     </div>
   );
 }
@@ -83,11 +108,20 @@ function calculateWinner(squares) {
 
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] == squares[b] && squares[b] == squares[c]) {
+    if (squares[a] && squares[a] === squares[b] && squares[b] === squares[c]) {
       return squares[a];
     }
   }
   return null;
+}
+
+function isGameOver(squares) {
+  for (let i = 0; i < squares.length; i++) {
+    if (squares[i] == null) {
+      return false;
+    }
+  }
+  return true;
 }
 
 // ========================================
