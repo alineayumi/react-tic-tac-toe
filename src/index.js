@@ -12,7 +12,7 @@ function Square(props) {
 
 function Reset(props) {
   return (
-    <button className="reset" onClick={props.onClick}>
+    <button className="reset hover:bg-black bg-black" onClick={props.onClick}>
       RESET GAME
     </button>
   );
@@ -24,7 +24,7 @@ function Board(props) {
   }
 
   return (
-    <div>
+    <div className="">
       <div className="board-row">
         {renderSquare(0)}
         {renderSquare(1)}
