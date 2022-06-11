@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 
@@ -57,33 +57,33 @@ function Game(props) {
     xIsNext: true,
   });
 
-  function onClick(i) {
-    const _history = history.slice();
-    let _current = _history[_history.length - 1];
-    setCurrent(_current);
+  useEffect(() => {
+    console.log('no dependency useEffect', history);
+  }, []);
+
+  useEffect(() => {
+    console.log('dependency useEffect', history);
+  }, [history]);
+
+  const onClick = (i) => {
+    let _current = {...current}
 
     // Checks if the square is not already filled
     if (isGameOver(_current.squares)) {
       setStatus("Game over. Play again clicking on 'RESET GAME'");
-    } else if (_current.squares[i] != null) {
+    } else if (_current.squares[i] !== null) {
       setStatus("This square is already filled. Please choose an empty one.");
-    } else if (_current.squares[i] == null) {
-      const sqs = _current.squares.slice();
-      sqs[i] = _current.xIsNext ? "X" : "O";
+    } else if (_current.squares[i] === null) {
+      _current.squares[i] = _current.xIsNext ? "X" : "O";
+      _current.xIsNext = !current.xIsNext;
 
-      _current = {
-        squares: sqs,
-        xIsNext: !current.xIsNext,
-      };
       setCurrent(_current);
-      _history.push(_current);
-      setHistory(_history);
-      console.log(history);
+      setHistory(history.concat(_current));
 
-      const winner = calculateWinner(sqs);
+      const winner = calculateWinner(_current.squares);
       if (winner) {
         setStatus("Winner: " + winner);
-      } else if (isGameOver(sqs)) {
+      } else if (isGameOver(_current.squares)) {
         setStatus("Game Over.");
       } else {
         setStatus("Next Player: " + (_current.xIsNext ? "X" : "O"));
