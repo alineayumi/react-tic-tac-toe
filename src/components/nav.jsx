@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import tictactoe from "../../src/assets/tic-tac-toe.png";
 
@@ -7,11 +7,26 @@ export default function Nav() {
     "block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent text-white md:p-0";
   const selectedNavLinkStyle =
     "block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent text-secondary md:p-0";
-  const unselectedDropdown =
-    "text-white";
-  const selectedDropdown =
-    "text-secondary";
+  const unselectedDropdown = "text-white";
+  const selectedDropdown = "text-secondary";
   const [showMenu, setMenu] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // logic for dropdown menu (close the dropdown when user clicks outside of it)
+  function useOutsideAlerter(ref) {
+    useEffect(() => {
+      function handleClickOutside(event) {
+        if (ref.current && !ref.current.contains(event.target)) {
+          setMenu(false);
+        }
+      }
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [ref]);
+  }
+  useOutsideAlerter(dropdownRef);
 
   return (
     <nav className="flex flex-row justify-between items-center px-3 sm:px-4 py-2.5 rounded bg-primary h-[60px] mx-[20px] mt-[20px]">
@@ -52,6 +67,7 @@ export default function Nav() {
         </svg>
       </button>
       <div
+        ref={dropdownRef}
         class={`absolute z-10 right-[20px] top-[85px] ${
           showMenu ? "block" : "hidden"
         } rounded shadow w-44 bg-primary`}
@@ -60,6 +76,7 @@ export default function Nav() {
           <li>
             <NavLink
               to=""
+              onClick={() => setMenu(false)}
               className={({ isActive }) =>
                 isActive ? selectedDropdown : unselectedDropdown
               }
@@ -71,6 +88,7 @@ export default function Nav() {
           <li>
             <NavLink
               to="about"
+              onClick={() => setMenu(false)}
               className={({ isActive }) =>
                 isActive ? selectedDropdown : unselectedDropdown
               }
@@ -81,6 +99,7 @@ export default function Nav() {
           <li>
             <NavLink
               to="game"
+              onClick={() => setMenu(false)}
               className={({ isActive }) =>
                 isActive ? selectedDropdown : unselectedDropdown
               }
