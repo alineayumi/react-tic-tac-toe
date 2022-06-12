@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "../../index.css";
 import Board from "./components/board";
 import Reset from "./components/reset";
@@ -12,7 +12,6 @@ export default function Game(props) {
   const [stepNumber, setStepNumber] = useState(0);
 
   useEffect(() => {
-    console.log(current);
     const winner = calculateWinner(current);
     if (winner) {
       setStatus("Winner: " + winner);
@@ -21,13 +20,13 @@ export default function Game(props) {
     } else {
       setStatus("Next Player: " + (xIsNext ? "X" : "O"));
     }
+    // eslint-disable-next-line
   }, [current]);
 
   const onClick = (i) => {
     const _history = history.slice(0, stepNumber + 1);
     let _current = history[stepNumber].squares.slice();
 
-    // console.log(_current.squares);
     if (isGameOver(_current)) {
       setStatus("Game over. Play again clicking on 'RESET GAME'");
     } else if (_current[i] !== null) {
@@ -70,12 +69,12 @@ export default function Game(props) {
             if (index > 0) {
               const desc = `Go to move #${index}`;
               return (
-                <li key={index}>
+                <li className="text-md" key={index}>
                   <button onClick={() => jumpTo(index)}>{desc}</button>
                 </li>
               );
             }
-            return <p key={index}>History</p>
+            return <p key={index}>History</p>;
           })}
         </ol>
       </div>
