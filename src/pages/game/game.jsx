@@ -57,26 +57,28 @@ export default function Game(props) {
   };
 
   return (
-    <div className="game">
-      <div className="game-board">
-        <Board squares={current} onClick={(i) => onClick(i)} />
-        <Reset onClick={() => onResetClick()} />
-      </div>
-      <div className="game-info">
-        <div>{status}</div>
-        <ol>
-          {history.map((gameState, index) => {
-            if (index > 0) {
-              const desc = `Go to move #${index}`;
-              return (
-                <li className="text-md" key={index}>
-                  <button onClick={() => jumpTo(index)}>{desc}</button>
-                </li>
-              );
-            }
-            return <p key={index}>History</p>;
-          })}
-        </ol>
+    <div class="container mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+        <div class=" row-3 align-top justify-left text-xl p-6">
+          <p>{status}</p>
+          <Board squares={current} onClick={(i) => onClick(i)} />
+          <Reset onClick={() => onResetClick()} />
+        </div>
+        <div class="flex justify-left text-xl p-6">
+          <ol>
+            {history.map((gameState, index) => {
+              if (index > 0) {
+                const desc = `Go to move #${index}`;
+                return (
+                  <li class="text-md" key={index}>
+                    <button onClick={() => jumpTo(index)}>{desc}</button>
+                  </li>
+                );
+              }
+              return <p key={index}>History</p>;
+            })}
+          </ol>
+        </div>
       </div>
     </div>
   );
