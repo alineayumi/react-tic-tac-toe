@@ -57,14 +57,14 @@ export default function Game(props) {
   };
 
   return (
-    <div class="container">
+    <div className="container">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="flex flex-col items-center justify-start text-xl p-6">
           <p className="text-left">{status}</p>
           <Board squares={current} onClick={(i) => onClick(i)} />
           <Reset onClick={() => onResetClick()} />
         </div>
-        <div class="flex justify-start p-6 text-xl">
+        <div className="flex justify-start p-6 text-xl">
           <ol>
             {history.map((gameState, index) => {
               if (index > 0) {
